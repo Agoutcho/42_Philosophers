@@ -1,41 +1,20 @@
 NAME = philo
 
-SRCS = 			checker.c \
-				error.c \
-				fill_min_max.c \
-				find_position.c \
-				init.c \
-				key_pressing.c \
-				parsing.c \
-				render_map.c \
-				route_checker.c \
-				main.c
+SRCS =			main.c \
 
-BONUS = 		checker_bonus.c \
-				error.c \
-				fill_min_max.c \
-				find_position.c \
-				init.c \
-				key_pressing.c \
-				parsing.c \
-				render_map.c \
-				route_checker.c \
-				main.c
+BONUS = 		main.c \
 
 HEADER_FILES = philosopher.h
 
 OBJS = $(SRCS:.c=.o)
-
-OBJS_DEPS = $(SRCS:.c=.d)
-
-BOBJS_DEPS = $(BONUS:.c=.d)
 
 BOBJS = $(BONUS:.c=.o)
 
 DEPS = philo.d
 
 CC = gcc
-C_FLAGS = -Wall -Wextra -Werror -I. -MD
+C_FLAGS = -Wall -Wextra -Werror -pthread -I.
+LEAKS_FLAGS = -Wall -Wextra -Werror -fsanitize=address -g3 -pthread -I. -MD
 
 %.o: %.c $(HEADER_FILES)
 	$(CC) $(C_FLAGS) -c $< -o $@
@@ -47,6 +26,11 @@ $(NAME): $(OBJS) $(HEADER_FILES)
 	@$(CC) $(C_FLAGS) -c $(SRCS)
 	@$(CC) $(C_FLAGS) -o $(NAME) $(OBJS)
 
+.PHONY: leaks
+leaks: $(OBJS) $(HEADER_FILES)
+	@$(CC) $(LEAKS_FLAGS) -c $(SRCS)
+	@$(CC) $(LEAKS_FLAGS) -o $(NAME) $(OBJS)
+
 .PHONY: bonus
 bonus: $(BOBJS) $(INCL)
 	rm -f $(BOBJS)
@@ -55,7 +39,7 @@ bonus: $(BOBJS) $(INCL)
 
 .PHONY: clean
 clean:
-	rm -f $(OBJS) $(BOBJS) $(NAME) $(OBJS_DEPS) $(BOBJS_DEPS)
+	rm -f $(OBJS) $(BOBJS) $(NAME)
 
 .PHONY: fclean
 fclean: clean
@@ -64,4 +48,5 @@ fclean: clean
 .PHONY: re
 re: fclean all
 
--include $(DEPS)
+.PHONY: releaks
+releaks: fclean leaks
