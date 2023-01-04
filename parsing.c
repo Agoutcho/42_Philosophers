@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/04 19:44:24 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/04 21:11:05 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/04 22:02:54 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int is_parsing_ok(int argc, char **argv)
     return (1);
 }
 
-int init(int argc, char **argv, t_data *data)
+int init_value(int argc, char **argv, t_data *data)
 {
     if (!is_parsing_ok(argc, argv))
         return (0);

@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 18:08:01 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/04 21:02:32 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/04 22:31:53 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,10 @@ typedef struct s_data {
     int time_to_eat;
     int time_to_sleep;
     int nbr_must_eat;
+    pthread_mutex_t mutex;
 } t_data;
 
 int is_parsing_ok(int argc, char **argv);
-int init(int argc, char **argv, t_data *data);
+int init_value(int argc, char **argv, t_data *data);
 
 #endif
