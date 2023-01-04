@@ -1,8 +1,10 @@
 NAME = philo
 
 SRCS =			main.c \
+				parsing.c \
 
 BONUS = 		main.c \
+				parsing.c \
 
 HEADER_FILES = philosopher.h
 

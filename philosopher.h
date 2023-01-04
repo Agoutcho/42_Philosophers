@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 18:08:01 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/04 17:51:08 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/04 21:02:32 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,16 @@
 # include <pthread.h>
 # include <sys/time.h>
 
+typedef enum e_state{
+    e_EATING,
+    e_SLEEPING,
+    e_THINKING,
+    e_DIED
+} t_state;
+
 typedef struct s_philo {
     int id;
+    t_state state;
 } t_philo;
 
 typedef struct s_data {
@@ -31,5 +39,8 @@ typedef struct s_data {
     int time_to_sleep;
     int nbr_must_eat;
 } t_data;
+
+int is_parsing_ok(int argc, char **argv);
+int init(int argc, char **argv, t_data *data);
 
 #endif
