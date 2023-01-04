@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 18:10:31 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/04 22:41:09 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/04 22:45:41 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,11 @@ int init(int argc, char **argv, t_data *data)
     return (1);
 }
 
+void destroy(t_data *data)
+{
+    pthread_mutex_destroy(&data->mutex);
+}
+
 int main()
 {
     t_data data;
@@ -77,6 +82,7 @@ int main()
     printf("[%s] Created\n",__FUNCTION__);
     pthread_mutex_unlock(&data.mutex);
     pthread_join(thread1, NULL);
+    destroy(&data.mutex);
     // struct s_dataa data;
     // pthread_t thread1;
     // struct timeval tp;
