@@ -14,10 +14,10 @@ DEPS = philo.d
 
 CC = gcc
 C_FLAGS = -Wall -Wextra -Werror -pthread -I.
-LEAKS_FLAGS = -Wall -Wextra -Werror -fsanitize=address -g3 -pthread -I. -MD
+LEAKS_FLAGS = -fsanitize=address -O1 -fno-omit-frame-pointer -fsanitize=undefined -g3
 
 %.o: %.c $(HEADER_FILES)
-	$(CC) $(C_FLAGS) -c $< -o $@
+	@$(CC) $(C_FLAGS) -c $< -o $@
 
 .PHONY: all
 all: $(NAME)
@@ -25,11 +25,13 @@ all: $(NAME)
 $(NAME): $(OBJS) $(HEADER_FILES)
 	@$(CC) $(C_FLAGS) -c $(SRCS)
 	@$(CC) $(C_FLAGS) -o $(NAME) $(OBJS)
+	@printf "✅ \033[0;32mCompilation done \033[0m\n"
 
 .PHONY: leaks
 leaks: $(OBJS) $(HEADER_FILES)
-	@$(CC) $(LEAKS_FLAGS) -c $(SRCS)
-	@$(CC) $(LEAKS_FLAGS) -o $(NAME) $(OBJS)
+	@$(CC) $(C_FLAGS) $(LEAKS_FLAGS) -c $(SRCS)
+	@$(CC) $(C_FLAGS) $(LEAKS_FLAGS) -o $(NAME) $(OBJS)
+	@printf "✅ \033[0;32mCompilation done \033[0m\n"
 
 .PHONY: bonus
 bonus: $(BOBJS) $(INCL)
