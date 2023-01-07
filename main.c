@@ -21,14 +21,19 @@ struct s_dataa{
 void accurate_msleep(unsigned long long usec)
 {
     struct timeval tp;
-    int time;
-    
+    long int timee;
+
     gettimeofday(&tp, NULL);
-    time = tp.tv_usec;
-    while (tp.tv_usec - time < (int)(usec * 1000))
+    timee = tp.tv_usec;
+    while (timee + (long int)(usec * 100) > 1000000)
     {
         gettimeofday(&tp, NULL);
-        usleep(1);
+        timee = tp.tv_usec;
+    }
+    while (tp.tv_usec - timee < (long int)(usec * 100))
+    {
+        gettimeofday(&tp, NULL);
+        usleep(10);
     }
 }
 
@@ -99,6 +104,7 @@ int init(int argc, char **argv, t_data *data)
     return (1);
 }
 
+// Le temps le plus grand pour la boucle du time initial
 int main(int argc, char **argv)
 {
     (void)argc;
