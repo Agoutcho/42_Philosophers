@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "philosopher.h"
-#include <string.h>
+
 
 struct s_dataa{
         int is_dead;
@@ -23,14 +23,35 @@ void accurate_msleep(unsigned long long usec)
     struct timeval tp;
     long int timee;
 
+    // printf("[%s] Debut msleep\n",__FUNCTION__);
     gettimeofday(&tp, NULL);
     timee = tp.tv_usec;
-    while (timee + (long int)(usec * 100) > 1000000)
+    while (timee + (long int)(usec * 1000) > 1000000)
     {
         gettimeofday(&tp, NULL);
         timee = tp.tv_usec;
     }
-    while (tp.tv_usec - timee < (long int)(usec * 100))
+    while (tp.tv_usec - timee < (long int)(usec * 1000))
+    {
+        gettimeofday(&tp, NULL);
+        usleep(10);
+    }
+}
+
+void accurate_usleep(unsigned long long usec)
+{
+    struct timeval tp;
+    long int timee;
+    
+    // printf("[%s] Debut usleep\n",__FUNCTION__);
+    gettimeofday(&tp, NULL);
+    timee = tp.tv_usec;
+    while (timee + (long int)(usec) > 1000000)
+    {
+        gettimeofday(&tp, NULL);
+        timee = tp.tv_usec;
+    }
+    while (tp.tv_usec - timee < (long int)(usec))
     {
         gettimeofday(&tp, NULL);
         usleep(10);
@@ -67,31 +88,37 @@ void destroy(t_data *data)
 
 void *ft_philo(void *phil)
 {
-    t_philo *data;
+    t_philo *philo;
     int temp;
 
-    data = (t_philo *)phil;
-    temp = (data->id + 1) % data->data->nbr_of_philo;
-    if (!pthread_mutex_lock(&data->mutex) && !pthread_mutex_lock(&data->data->philo[temp].mutex))
+    philo = (t_philo *)phil;
+    temp = (philo->id + 1) % philo->data->nbr_of_philo;
+    accurate_usleep((philo->data->nbr_of_philo + 1) / (philo->id + 1));
+    while (1)
     {
-        printf("%d Philosopher %d has taken a fork", time_in_ms(1, data->data), data->id + 1);
-        accurate_msleep(data->data->time_to_eat);
-        pthread_mutex_unlock(&data->mutex);
-        pthread_mutex_unlock(&data->data->philo[temp].mutex);
+        if (!pthread_mutex_lock(&philo->mutex) && !pthread_mutex_lock(&philo->data->philo[temp].mutex))
+        {
+            printf("%d Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
+            accurate_msleep(philo->data->time_to_eat);
+            pthread_mutex_unlock(&philo->mutex);
+            pthread_mutex_unlock(&philo->data->philo[temp].mutex);
+            printf("%d Philosopher %d is sleeping\n", time_in_ms(1, philo->time), philo->id + 1);
+        }
+        accurate_msleep(philo->data->time_to_sleep);
     }
     return (NULL);
 }
 
-int time_in_ms(int value, t_data *data)
+int time_in_ms(int value, int time)
 {
     struct timeval tp;
     
     gettimeofday(&tp, NULL);
     if (value)
     {
-        printf("[%s] data.time : %d\n",__FUNCTION__, data->time);
-        printf("[%s] tp.tv_sec : %d\n",__FUNCTION__, tp.tv_usec);
-        return ((tp.tv_usec - data->time) / 1000);
+        // printf("[%s] data.time : %d\n",__FUNCTION__, time);
+        // printf("[%s] tp.tv_sec : %ld\n",__FUNCTION__, tp.tv_usec);
+        return ((tp.tv_usec - time) / 1000);
     }
     else 
         return (tp.tv_usec);
@@ -99,34 +126,51 @@ int time_in_ms(int value, t_data *data)
 
 int init(int argc, char **argv, t_data *data)
 {
-    if (!init_value(argc, argv, data))
+    int i;
+
+    if (!parse_value(argc, argv, data))
         return (0);
+    data->philo = (t_philo *)malloc(sizeof(t_philo) * data->nbr_of_philo);
+    if (!data->philo )
+        return (0);
+    i = 0;
+    data->time  = time_in_ms(0, 0);
+    while (i < data->nbr_of_philo)
+    {
+        // printf("[%s] Début while i : %d\n",__FUNCTION__, i);
+        data->philo[i].time  = time_in_ms(0, 0);
+        data->philo[i].id = i;
+        data->philo[i].last_time_eat = 0;
+        data->philo[i].nbr_eat = 0;
+        data->philo[i].data = data;
+        pthread_mutex_init(&data->philo[i].mutex, NULL);
+        pthread_mutex_lock(&data->philo[i].mutex);
+        pthread_create(&data->philo[i].thread, NULL, ft_philo, &data->philo[i]);
+        pthread_mutex_unlock(&data->philo[i].mutex);
+        // printf("[%s] Fin while i : %d\n",__FUNCTION__, i);
+        i++;
+    }
     return (1);
 }
 
 // Le temps le plus grand pour la boucle du time initial
 int main(int argc, char **argv)
 {
-    (void)argc;
-    (void)argv;
     t_data data;
+    int i;
 
-    // init(argc, argv, &data);
-    data.time = time_in_ms(0, &data);
-    printf("[%s] START\n",__FUNCTION__);
-    printf("[%s] data.time : %d\n",__FUNCTION__, data.time);
-    printf("[%s] actual time : %d\n",__FUNCTION__, time_in_ms(1, &data));
-    printf("[%s] GO sleep\n",__FUNCTION__);
-    accurate_msleep(100);
-    printf("[%s] 1 STOP sleep\n",__FUNCTION__);
-    printf("[%s] actual time : %d\n",__FUNCTION__, time_in_ms(1, &data));
-    accurate_msleep(256);
-    printf("[%s] 2 STOP sleep\n",__FUNCTION__);
-    printf("[%s] actual time : %d\n",__FUNCTION__, time_in_ms(1, &data));
-    accurate_msleep(322);
-    printf("[%s] 3 STOP sleep\n",__FUNCTION__);
-    printf("[%s] actual time : %d\n",__FUNCTION__, time_in_ms(1, &data));
-    return 0;
+    printf("[%s] START INIT\n",__FUNCTION__);
+    if (!init(argc, argv, &data))
+        return (0);
+    printf("[%s] INIT DONE\n",__FUNCTION__);
+
+    i = 0;
+    while (1)
+    {
+        pthread_join(data.philo[i % data.nbr_of_philo].thread, NULL);
+        i++;
+    }
+    printf("[%s] MAIN DONE\n",__FUNCTION__);
     // // if (!init(argc, argv, &data))
     // //     return (0);
     // pthread_mutex_init(&data.mutex, NULL);

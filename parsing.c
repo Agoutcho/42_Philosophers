@@ -72,7 +72,7 @@ int is_parsing_ok(int argc, char **argv)
     return (1);
 }
 
-int init_value(int argc, char **argv, t_data *data)
+int parse_value(int argc, char **argv, t_data *data)
 {
     if (!is_parsing_ok(argc, argv))
         return (0);

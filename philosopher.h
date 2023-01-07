@@ -19,6 +19,7 @@
 # include <unistd.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <string.h>
 
 typedef struct s_data t_data;
 
@@ -31,6 +32,9 @@ typedef enum e_state{
 
 typedef struct s_philo {
     int id;
+    int last_time_eat;
+    int nbr_eat;
+    int time;
     t_state state;
     pthread_mutex_t mutex;
     pthread_t thread;
@@ -49,7 +53,8 @@ typedef struct s_data {
 } t_data;
 
 int is_parsing_ok(int argc, char **argv);
-int init_value(int argc, char **argv, t_data *data);
-int time_in_ms(int value, t_data *data);
+int parse_value(int argc, char **argv, t_data *data);
+int time_in_ms(int value, int time);
+int max(int a, int b);
 
 #endif
