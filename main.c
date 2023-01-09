@@ -34,23 +34,37 @@ void accurate_msleep(unsigned long long msec)
 
 void accurate_usleep(unsigned long long usec)
 {
-    struct timeval tp;
-    long int timee;
-    
-    // printf("[%s] Debut usleep\n",__FUNCTION__);
-    gettimeofday(&tp, NULL);
-    timee = tp.tv_usec;
-    while (timee + (long int)(usec) > 1000000)
+    long actual_time;
+
+    actual_time = time_in_us(0, 0);
+    while (time_in_us(0, 0) - actual_time < (long int)(usec))
     {
-        gettimeofday(&tp, NULL);
-        timee = tp.tv_usec;
-    }
-    while (tp.tv_usec - timee < (long int)(usec))
-    {
-        gettimeofday(&tp, NULL);
+        // printf("[%s] ms : %ld\n",__FUNCTION__, time_in_ms(0, 0));
+        // printf("[%s] time_in_ms(0, 0) - actual_time : %ld\n",__FUNCTION__, time_in_ms(0, 0) - actual_time);
+        // printf("[%s] msec * 1000 : %ld\n",__FUNCTION__, (long int)(msec));
         usleep(10);
     }
 }
+
+// void accurate_usleep(unsigned long long usec)
+// {
+//     struct timeval tp;
+//     long int timee;
+    
+//     // printf("[%s] Debut usleep\n",__FUNCTION__);
+//     gettimeofday(&tp, NULL);
+//     timee = tp.tv_usec;
+//     while (timee + (long int)(usec) > 1000000)
+//     {
+//         gettimeofday(&tp, NULL);
+//         timee = tp.tv_usec;
+//     }
+//     while (tp.tv_usec - timee < (long int)(usec))
+//     {
+//         gettimeofday(&tp, NULL);
+//         usleep(10);
+//     }
+// }
 
 void *fct(void *arg)
 {
@@ -84,22 +98,46 @@ void *ft_philo(void *phil)
 {
     t_philo *philo;
     int temp;
+    int sleep;
 
     philo = (t_philo *)phil;
     temp = (philo->id + 1) % philo->data->nbr_of_philo;
-    // accurate_msleep(1);
+    sleep = philo->data->t_to_sleep;
+    accurate_usleep(100);
     while (1)
     {
+        printf("%ld Philosopher %d is thinking\n", time_in_ms(1, philo->time), philo->id + 1);
         if (!pthread_mutex_lock(&philo->mutex) && !pthread_mutex_lock(&philo->data->philo[temp].mutex))
         {
+            philo->last_time_eat = time_in_ms(0, 0);
             printf("%ld Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
+            printf("%ld Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
+            printf("%ld Philosopher %d is eating\n", time_in_ms(1, philo->time), philo->id + 1);
             accurate_msleep(philo->data->t_to_eat);
             // printf("%ld Philosopher %d will put back\n", time_in_ms(1, philo->time), philo->id + 1);
             pthread_mutex_unlock(&philo->mutex);
             pthread_mutex_unlock(&philo->data->philo[temp].mutex);
             // printf("%ld Philosopher %d is sleeping\n", time_in_ms(1, philo->time), philo->id + 1);
         }
-        accurate_msleep(philo->data->t_to_sleep);
+        if (time_in_ms(0, 0) - philo->last_time_eat >= philo->data->t_to_die)
+        {
+            printf("%ld Philosopher %d died\n", time_in_ms(1, philo->time), philo->id + 1);
+            philo->state = e_DIED;
+            break;
+        }
+        else if (philo->data->t_to_sleep >= philo->data->t_to_die - philo->data->t_to_eat)
+            sleep = philo->data->t_to_die - philo->data->t_to_eat;
+        else 
+            sleep = philo->data->t_to_sleep;
+        printf("%ld Philosopher %d is sleeping\n", time_in_ms(1, philo->time), philo->id + 1);
+        accurate_msleep(sleep);
+        if (time_in_ms(0, 0) - philo->last_time_eat >= philo->data->t_to_die)
+        {
+            printf("%ld Philosopher %d died\n", time_in_ms(1, philo->time), philo->id + 1);
+            philo->state = e_DIED;
+            break;
+        }
+        accurate_usleep(10);
     }
     return (NULL);
 }
@@ -180,6 +218,22 @@ int init(int argc, char **argv, t_data *data)
     return (1);
 }
 
+int check_death(t_data *data)
+{
+    int i;
+
+    i = 0;
+    while (i < data->nbr_of_philo)
+    {
+        if (data->philo[i % data->nbr_of_philo].state == e_DIED)
+        {
+            return (1);
+        }
+        i++;
+    }
+    return (0);
+}
+
 // Le temps le plus grand pour la boucle du time initial
 int main(int argc, char **argv)
 {
@@ -191,12 +245,8 @@ int main(int argc, char **argv)
         return (0);
     printf("[%s] INIT DONE\n",__FUNCTION__);
 
-    i = 0;
-    while (i++ < 3)
-    {
-        sleep(1);
-         printf("[%s] %d\n",__FUNCTION__, i);
-    }
+    while (!check_death(&data))
+    {}
     i = 0;
     while (i < data.nbr_of_philo)
     {
@@ -208,7 +258,7 @@ int main(int argc, char **argv)
     //     pthread_join(data.philo[i % data.nbr_of_philo].thread, NULL);
     //     i++;
     // }
-    printf("[%s] MAIN DONE\n",__FUNCTION__);
+    // printf("[%s] MAIN DONE\n",__FUNCTION__);
     // // if (!init(argc, argv, &data))
     // //     return (0);
     // pthread_mutex_init(&data.mutex, NULL);

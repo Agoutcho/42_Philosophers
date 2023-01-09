@@ -32,7 +32,7 @@ typedef enum e_state{
 
 typedef struct s_philo {
     int id;
-    int last_time_eat;
+    long last_time_eat;
     int nbr_eat;
     long time;
     t_state state;
