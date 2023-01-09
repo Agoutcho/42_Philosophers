@@ -34,7 +34,7 @@ typedef struct s_philo {
     int id;
     int last_time_eat;
     int nbr_eat;
-    int time;
+    long time;
     t_state state;
     pthread_mutex_t mutex;
     pthread_t thread;
@@ -43,18 +43,19 @@ typedef struct s_philo {
 
 typedef struct s_data {
     int nbr_of_philo;
-    int time_to_die;
-    int time_to_eat;
-    int time_to_sleep;
+    int t_to_die;
+    int t_to_eat;
+    int t_to_sleep;
     int nbr_must_eat;
-    int time;
+    long time;
     pthread_mutex_t mutex;
     t_philo *philo;
 } t_data;
 
 int is_parsing_ok(int argc, char **argv);
 int parse_value(int argc, char **argv, t_data *data);
-int time_in_ms(int value, int time);
+long time_in_ms(int value, long time);
+long time_in_us(int value, long time);
 int max(int a, int b);
 
 #endif

@@ -81,17 +81,17 @@ int parse_value(int argc, char **argv, t_data *data)
     else
         data->nbr_must_eat = 0;
     data->nbr_of_philo = ft_atoi(argv[1]);
-    data->time_to_die = ft_atoi(argv[2]);
-    data->time_to_eat = ft_atoi(argv[3]);
-    data->time_to_sleep = ft_atoi(argv[4]);
+    data->t_to_die = ft_atoi(argv[2]);
+    data->t_to_eat = ft_atoi(argv[3]);
+    data->t_to_sleep = ft_atoi(argv[4]);
     if (data->nbr_of_philo < 1 || data->nbr_of_philo > 200 \
-        || data->time_to_die < 60 || data->time_to_eat < 60 \
-        || data->time_to_sleep < 60)
+        || data->t_to_die < 60 || data->t_to_eat < 60 \
+        || data->t_to_sleep < 60)
         return (0);
     printf("data->nbr_of_philo : %d\n", data->nbr_of_philo);
-    printf("data->time_to_die : %d\n", data->time_to_die);
-    printf("data->time_to_eat : %d\n", data->time_to_eat);
-    printf("data->time_to_sleep : %d\n", data->time_to_sleep);
+    printf("data->t_to_die : %d\n", data->t_to_die);
+    printf("data->t_to_eat : %d\n", data->t_to_eat);
+    printf("data->t_to_sleep : %d\n", data->t_to_sleep);
     printf("data->nbr_must_eat : %d\n", data->nbr_must_eat);
     return (1);
 }

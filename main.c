@@ -18,23 +18,17 @@ struct s_dataa{
         int time;
 };
 
-void accurate_msleep(unsigned long long usec)
+void accurate_msleep(unsigned long long msec)
 {
-    struct timeval tp;
-    long int timee;
+    long actual_time;
 
-    // printf("[%s] Debut msleep\n",__FUNCTION__);
-    gettimeofday(&tp, NULL);
-    timee = tp.tv_usec;
-    while (timee + (long int)(usec * 1000) > 1000000)
+    actual_time = time_in_ms(0, 0);
+    while (time_in_ms(0, 0) - actual_time < (long int)(msec))
     {
-        gettimeofday(&tp, NULL);
-        timee = tp.tv_usec;
-    }
-    while (tp.tv_usec - timee < (long int)(usec * 1000))
-    {
-        gettimeofday(&tp, NULL);
-        usleep(10);
+        // printf("[%s] ms : %ld\n",__FUNCTION__, time_in_ms(0, 0));
+        // printf("[%s] time_in_ms(0, 0) - actual_time : %ld\n",__FUNCTION__, time_in_ms(0, 0) - actual_time);
+        // printf("[%s] msec * 1000 : %ld\n",__FUNCTION__, (long int)(msec));
+        usleep(100);
     }
 }
 
@@ -93,35 +87,67 @@ void *ft_philo(void *phil)
 
     philo = (t_philo *)phil;
     temp = (philo->id + 1) % philo->data->nbr_of_philo;
-    accurate_usleep((philo->data->nbr_of_philo + 1) / (philo->id + 1));
+    // accurate_msleep(1);
     while (1)
     {
         if (!pthread_mutex_lock(&philo->mutex) && !pthread_mutex_lock(&philo->data->philo[temp].mutex))
         {
-            printf("%d Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
-            accurate_msleep(philo->data->time_to_eat);
+            printf("%ld Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
+            accurate_msleep(philo->data->t_to_eat);
+            // printf("%ld Philosopher %d will put back\n", time_in_ms(1, philo->time), philo->id + 1);
             pthread_mutex_unlock(&philo->mutex);
             pthread_mutex_unlock(&philo->data->philo[temp].mutex);
-            printf("%d Philosopher %d is sleeping\n", time_in_ms(1, philo->time), philo->id + 1);
+            // printf("%ld Philosopher %d is sleeping\n", time_in_ms(1, philo->time), philo->id + 1);
         }
-        accurate_msleep(philo->data->time_to_sleep);
+        accurate_msleep(philo->data->t_to_sleep);
     }
     return (NULL);
 }
 
-int time_in_ms(int value, int time)
+long time_in_us(int value, long time)
 {
     struct timeval tp;
-    
+    long us;
+
     gettimeofday(&tp, NULL);
     if (value)
     {
-        // printf("[%s] data.time : %d\n",__FUNCTION__, time);
+        // printf("[%s] data.time : %ld\n",__FUNCTION__, time);
         // printf("[%s] tp.tv_sec : %ld\n",__FUNCTION__, tp.tv_usec);
-        return ((tp.tv_usec - time) / 1000);
+        us = tp.tv_sec;
+	    us += tp.tv_usec;
+        return (us - time);
     }
-    else 
-        return (tp.tv_usec);
+    else
+    {
+        us = tp.tv_sec;
+	    us += tp.tv_usec;
+        // printf("[%s] us : %ld\n",__FUNCTION__, us);
+        return (us);
+    }
+}
+
+long time_in_ms(int value, long time)
+{
+    struct timeval tp;
+    long ms;
+
+    gettimeofday(&tp, NULL);
+    if (value)
+    {
+        // printf("[%s] data.time : %ld\n",__FUNCTION__, time);
+        // printf("[%s] tp.tv_sec : %ld\n",__FUNCTION__, tp.tv_usec);
+        ms = tp.tv_sec * 1000;
+	    ms += tp.tv_usec / 1000;
+        return (ms - time);
+    }
+    else
+    { 
+        ms = tp.tv_sec * 1000;
+	    ms += tp.tv_usec / 1000;
+        // printf("[%s] ms : %ld\n",__FUNCTION__, ms);
+        return (ms);
+    }
 }
 
 int init(int argc, char **argv, t_data *data)
@@ -135,6 +161,7 @@ int init(int argc, char **argv, t_data *data)
         return (0);
     i = 0;
     data->time  = time_in_ms(0, 0);
+    printf("[%s] time : %ld\n",__FUNCTION__, data->time);
     while (i < data->nbr_of_philo)
     {
         // printf("[%s] Début while i : %d\n",__FUNCTION__, i);
@@ -165,11 +192,22 @@ int main(int argc, char **argv)
     printf("[%s] INIT DONE\n",__FUNCTION__);
 
     i = 0;
-    while (1)
+    while (i++ < 3)
     {
-        pthread_join(data.philo[i % data.nbr_of_philo].thread, NULL);
+        sleep(1);
+         printf("[%s] %d\n",__FUNCTION__, i);
+    }
+    i = 0;
+    while (i < data.nbr_of_philo)
+    {
+        pthread_detach(data.philo[i % data.nbr_of_philo].thread);
         i++;
     }
+    // while (1)
+    // {
+    //     pthread_join(data.philo[i % data.nbr_of_philo].thread, NULL);
+    //     i++;
+    // }
     printf("[%s] MAIN DONE\n",__FUNCTION__);
     // // if (!init(argc, argv, &data))
     // //     return (0);
