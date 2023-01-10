@@ -74,7 +74,10 @@ void *ft_philo(void *phil)
             accurate_msleep(philo->data->t_to_eat);
             pthread_mutex_unlock(&philo->mutex_fork);
             pthread_mutex_unlock(&philo->data->philo[temp].mutex_fork);
+            philo->nbr_eat++;
         }
+        if (philo->nbr_eat >= philo->data->nbr_must_eat)
+            break;
         if ((philo->id + 1) % 2 != 0)
         {
             if (is_dead(philo))
