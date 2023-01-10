@@ -24,7 +24,7 @@
 typedef struct s_data t_data;
 
 typedef enum e_state{
-    e_eating,
+    e_eating = 1,
     e_sleeping,
     e_thinking,
     e_died

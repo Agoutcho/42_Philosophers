@@ -40,6 +40,12 @@ void *ft_philo(void *phil)
 		if (is_dead(philo))
 			break;
 		printf("\e[1;%dm%ld Philosopher %d is thinking\e[0m\n", c, time_in_ms(1, philo->time), philo->id + 1);
+        if (philo->data->nbr_of_philo == 1)
+        {
+            philo->state = e_died;
+            accurate_msleep(philo->data->t_to_die + 2);
+            break;
+        }
 		if ((philo->id + 1) % 2 == 0)
 		{
 			if (is_dead(philo))
@@ -60,7 +66,7 @@ void *ft_philo(void *phil)
 			pthread_mutex_unlock(&philo->data->philo[temp].mutex_fork);
 			philo->nbr_eat++;
 		}
-		if (philo->nbr_eat >= philo->data->nbr_must_eat)
+		if (philo->data->nbr_must_eat != -1 && philo->nbr_eat >= philo->data->nbr_must_eat)
 			break;
 		if ((philo->id + 1) % 2 != 0)
 		{
@@ -101,19 +107,18 @@ void destroy(t_data *data)
 {
 	int	i;
 
-	i = 0;
-	if (data->philo)
-	{
-		free(data->philo);
-		data->philo = NULL;
-	}
 	while (i < data->nbr_of_philo)
 	{
 		pthread_mutex_destroy(&data->philo[i].mutex_fork);
 		i++;
 	}
+    i = 0;
+	if (data->philo)
+	{
+		free(data->philo);
+		data->philo = NULL;
+	}
 	pthread_mutex_destroy(&data->mutex_death);
-
 }
 
 int init(int argc, char **argv, t_data *data)
@@ -127,6 +132,7 @@ int init(int argc, char **argv, t_data *data)
 		return (0);
 	i = 0;
 	pthread_mutex_init(&data->mutex_death, NULL);
+    // usleep(100);
 	data->time = time_in_ms(0, 0);
 	while (i < data->nbr_of_philo)
 	{
@@ -191,7 +197,7 @@ int main(int argc, char **argv)
 	while (i < data.nbr_of_philo)
 	{
 		pthread_join(data.philo[i % data.nbr_of_philo].thread, NULL);
-		i++;
+        i++;
 	}
 	destroy(&data);
 	return (0);
