@@ -19,25 +19,9 @@ void accurate_msleep(unsigned long long msec)
     actual_time = time_in_ms(0, 0);
     while (time_in_ms(0, 0) - actual_time < (long int)(msec))
     {
-        usleep(100);
+        usleep(500);
     }
 }
-
-void accurate_usleep(unsigned long long usec)
-{
-    long actual_time;
-
-    actual_time = time_in_us(0, 0);
-    while (time_in_us(0, 0) - actual_time < (long int)(usec))
-    {
-        usleep(10);
-    }
-}
-
-// void destroy(t_data *data)
-// {
-//     // pthread_mutex_destroy(&data->mutex);
-// }
 
 void *ft_philo(void *phil)
 {
@@ -93,26 +77,6 @@ void *ft_philo(void *phil)
     return (NULL);
 }
 
-long time_in_us(int value, long time)
-{
-    struct timeval tp;
-    long us;
-
-    gettimeofday(&tp, NULL);
-    if (value)
-    {
-        us = tp.tv_sec;
-	    us += tp.tv_usec;
-        return (us - time);
-    }
-    else
-    {
-        us = tp.tv_sec;
-	    us += tp.tv_usec;
-        return (us);
-    }
-}
-
 long time_in_ms(int value, long time)
 {
     struct timeval tp;
@@ -133,6 +97,25 @@ long time_in_ms(int value, long time)
     }
 }
 
+void destroy(t_data *data)
+{
+    int i;
+
+    i = 0;
+    if (data->philo)
+    {
+        free(data->philo);
+        data->philo = NULL;
+    }
+    while (i < data->nbr_of_philo)
+    {
+        pthread_mutex_destroy(&data->philo[i].mutex_fork);
+        i++;
+    }
+    pthread_mutex_destroy(&data->mutex_death);
+
+}
+
 int init(int argc, char **argv, t_data *data)
 {
     int i;
@@ -144,8 +127,7 @@ int init(int argc, char **argv, t_data *data)
         return (0);
     i = 0;
     pthread_mutex_init(&data->mutex_death, NULL);
-    data->time  = time_in_ms(0, 0);
-    printf("[%s] time : %ld\n",__FUNCTION__, data->time);
+    data->time = time_in_ms(0, 0);
     while (i < data->nbr_of_philo)
     {
         data->philo[i].time  = time_in_ms(0, 0);
@@ -155,9 +137,8 @@ int init(int argc, char **argv, t_data *data)
         data->philo[i].data = data;
         data->philo[i].last_time_eat = time_in_ms(0, 0);
         pthread_mutex_init(&data->philo[i].mutex_fork, NULL);
-        pthread_mutex_lock(&data->philo[i].mutex_fork);
-        pthread_create(&data->philo[i].thread, NULL, ft_philo, &data->philo[i]);
-        pthread_mutex_unlock(&data->philo[i].mutex_fork);
+        pthread_create(&data->philo[i].thread, NULL, \
+                        ft_philo, &data->philo[i]);
         i++;
     }
     return (1);
@@ -205,7 +186,6 @@ int main(int argc, char **argv)
 
     if (!init(argc, argv, &data))
         return (0);
-
     check_death(&data);
     i = 0;
     while (i < data.nbr_of_philo)
@@ -213,10 +193,6 @@ int main(int argc, char **argv)
         pthread_join(data.philo[i % data.nbr_of_philo].thread, NULL);
         i++;
     }
-    // while (i < data.nbr_of_philo)
-    // {
-    //     pthread_detach(data.philo[i % data.nbr_of_philo].thread);
-    //     i++;
-    // }
+    destroy(&data);
     return (0);
 }

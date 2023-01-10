@@ -57,8 +57,7 @@ typedef struct s_data {
 int is_parsing_ok(int argc, char **argv);
 int parse_value(int argc, char **argv, t_data *data);
 long time_in_ms(int value, long time);
-long time_in_us(int value, long time);
-int max(int a, int b);
 int is_dead(t_philo *philo);
+void destroy(t_data *data);
 
 #endif
