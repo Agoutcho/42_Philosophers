@@ -88,10 +88,5 @@ int parse_value(int argc, char **argv, t_data *data)
         || data->t_to_die < 60 || data->t_to_eat < 60 \
         || data->t_to_sleep < 60 || data->nbr_must_eat == 0)
         return (0);
-    printf("data->nbr_of_philo : %d\n", data->nbr_of_philo);
-    printf("data->t_to_die : %d\n", data->t_to_die);
-    printf("data->t_to_eat : %d\n", data->t_to_eat);
-    printf("data->t_to_sleep : %d\n", data->t_to_sleep);
-    printf("data->nbr_must_eat : %d\n", data->nbr_must_eat);
     return (1);
 }

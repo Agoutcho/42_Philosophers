@@ -49,6 +49,11 @@ void ft_philo(pthread_mutex_t *mutex)
 
 int main(int argc, char **argv)
 {
+    for(int i = 0;i < 256;i++){
+        printf("i : %d\n", i);
+        printf("\e[1;%dm[%s]\e[0m | \e[1;%dmJe sors de la fonction\e[0m\n",(i % 8) + 30 , __FUNCTION__ , (i % 8) + 30);
+    }
+    return 0;
     pthread_mutex_t mutex;
     pthread_t thread;
     struct timeval tp;
