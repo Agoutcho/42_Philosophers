@@ -24,10 +24,10 @@
 typedef struct s_data t_data;
 
 typedef enum e_state{
-    e_EATING,
-    e_SLEEPING,
-    e_THINKING,
-    e_DIED
+    e_eating,
+    e_sleeping,
+    e_thinking,
+    e_died
 } t_state;
 
 typedef struct s_philo {
@@ -35,8 +35,9 @@ typedef struct s_philo {
     long last_time_eat;
     int nbr_eat;
     long time;
+    long death_time;
     t_state state;
-    pthread_mutex_t mutex;
+    pthread_mutex_t mutex_fork;
     pthread_t thread;
     t_data *data;
 } t_philo;
@@ -48,7 +49,8 @@ typedef struct s_data {
     int t_to_sleep;
     int nbr_must_eat;
     long time;
-    pthread_mutex_t mutex;
+    int dead;
+    pthread_mutex_t mutex_death;
     t_philo *philo;
 } t_data;
 
@@ -57,5 +59,6 @@ int parse_value(int argc, char **argv, t_data *data);
 long time_in_ms(int value, long time);
 long time_in_us(int value, long time);
 int max(int a, int b);
+int is_dead(t_philo *philo);
 
 #endif

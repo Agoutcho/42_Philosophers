@@ -79,14 +79,14 @@ int parse_value(int argc, char **argv, t_data *data)
     if (argc == 6 && ft_atoi(argv[5]) > 0)
         data->nbr_must_eat = ft_atoi(argv[5]);
     else
-        data->nbr_must_eat = 0;
+        data->nbr_must_eat = -1;
     data->nbr_of_philo = ft_atoi(argv[1]);
     data->t_to_die = ft_atoi(argv[2]);
     data->t_to_eat = ft_atoi(argv[3]);
     data->t_to_sleep = ft_atoi(argv[4]);
     if (data->nbr_of_philo < 1 || data->nbr_of_philo > 200 \
         || data->t_to_die < 60 || data->t_to_eat < 60 \
-        || data->t_to_sleep < 60)
+        || data->t_to_sleep < 60 || data->nbr_must_eat == 0)
         return (0);
     printf("data->nbr_of_philo : %d\n", data->nbr_of_philo);
     printf("data->t_to_die : %d\n", data->t_to_die);

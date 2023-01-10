@@ -46,53 +46,10 @@ void accurate_usleep(unsigned long long usec)
     }
 }
 
-// void accurate_usleep(unsigned long long usec)
+// void destroy(t_data *data)
 // {
-//     struct timeval tp;
-//     long int timee;
-    
-//     // printf("[%s] Debut usleep\n",__FUNCTION__);
-//     gettimeofday(&tp, NULL);
-//     timee = tp.tv_usec;
-//     while (timee + (long int)(usec) > 1000000)
-//     {
-//         gettimeofday(&tp, NULL);
-//         timee = tp.tv_usec;
-//     }
-//     while (tp.tv_usec - timee < (long int)(usec))
-//     {
-//         gettimeofday(&tp, NULL);
-//         usleep(10);
-//     }
+//     // pthread_mutex_destroy(&data->mutex);
 // }
-
-void *fct(void *arg)
-{
-    // struct timeval tp;
-    // struct s_dataa *deado = (struct s_dataa *)arg;
-    // gettimeofday(&tp, NULL);
-    // int i = 0;
-    // // printf("[%s] ENTER time : %d\n",__FUNCTION__,  tp.tv_usec - deado->time);
-    // while(!deado->is_dead)
-    // {
-    //     gettimeofday(&tp, NULL);
-    //     printf("[%s] Before usleep time : %d\n",__FUNCTION__,  tp.tv_usec - deado->time);
-    //     accurate_msleep(15);
-    //     i++;
-    // }
-    t_data *data;
-    data = (t_data *)arg;
-    pthread_mutex_lock(&data->mutex);
-    printf("[%s] Here !\n",__FUNCTION__);
-    pthread_mutex_unlock(&data->mutex);
-    printf("[%s] FINITO !\n",__FUNCTION__);
-    return NULL;
-}
-
-void destroy(t_data *data)
-{
-    pthread_mutex_destroy(&data->mutex);
-}
 
 void *ft_philo(void *phil)
 {
@@ -103,42 +60,47 @@ void *ft_philo(void *phil)
     philo = (t_philo *)phil;
     temp = (philo->id + 1) % philo->data->nbr_of_philo;
     sleep = philo->data->t_to_sleep;
-    accurate_usleep(100);
+    philo->last_time_eat = time_in_ms(0, 0);
+    // accurate_usleep(100);
     while (1)
     {
+        if (is_dead(philo))
+            break;
         printf("%ld Philosopher %d is thinking\n", time_in_ms(1, philo->time), philo->id + 1);
-        if (!pthread_mutex_lock(&philo->mutex) && !pthread_mutex_lock(&philo->data->philo[temp].mutex))
+        if ((philo->id + 1) % 2 == 0)
         {
+            if (is_dead(philo))
+                break;
+            printf("%ld Philosopher %d is sleeping\n", time_in_ms(1, philo->time), philo->id + 1);
+            accurate_msleep(sleep);
+        }
+        if (!pthread_mutex_lock(&philo->mutex_fork) && !pthread_mutex_lock(&philo->data->philo[temp].mutex_fork))
+        {
+            if (is_dead(philo))
+                break;
+            printf("%ld Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
+            // if (!pthread_mutex_lock(&philo->data->philo[temp].mutex_fork))
+            printf("%ld Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
             philo->last_time_eat = time_in_ms(0, 0);
-            printf("%ld Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
-            printf("%ld Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
+            // printf("%ld Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
+            // printf("%ld Philosopher %d has taken a fork\n", time_in_ms(1, philo->time), philo->id + 1);
             printf("%ld Philosopher %d is eating\n", time_in_ms(1, philo->time), philo->id + 1);
             accurate_msleep(philo->data->t_to_eat);
-            // printf("%ld Philosopher %d will put back\n", time_in_ms(1, philo->time), philo->id + 1);
-            pthread_mutex_unlock(&philo->mutex);
-            pthread_mutex_unlock(&philo->data->philo[temp].mutex);
-            // printf("%ld Philosopher %d is sleeping\n", time_in_ms(1, philo->time), philo->id + 1);
+            pthread_mutex_unlock(&philo->mutex_fork);
+            pthread_mutex_unlock(&philo->data->philo[temp].mutex_fork);
         }
-        if (time_in_ms(0, 0) - philo->last_time_eat >= philo->data->t_to_die)
+        if ((philo->id + 1) % 2 != 0)
         {
-            printf("%ld Philosopher %d died\n", time_in_ms(1, philo->time), philo->id + 1);
-            philo->state = e_DIED;
-            break;
+            if (is_dead(philo))
+                break;
+            printf("%ld Philosopher %d is sleeping\n", time_in_ms(1, philo->time), philo->id + 1);
+            accurate_msleep(sleep);
         }
-        else if (philo->data->t_to_sleep >= philo->data->t_to_die - philo->data->t_to_eat)
-            sleep = philo->data->t_to_die - philo->data->t_to_eat;
-        else 
-            sleep = philo->data->t_to_sleep;
-        printf("%ld Philosopher %d is sleeping\n", time_in_ms(1, philo->time), philo->id + 1);
-        accurate_msleep(sleep);
-        if (time_in_ms(0, 0) - philo->last_time_eat >= philo->data->t_to_die)
-        {
-            printf("%ld Philosopher %d died\n", time_in_ms(1, philo->time), philo->id + 1);
-            philo->state = e_DIED;
-            break;
-        }
-        accurate_usleep(10);
     }
+    if (philo->state == e_died)
+        printf("%ld Philosopher %d died\n", philo->death_time, philo->id + 1);
+    pthread_mutex_unlock(&philo->mutex_fork);
+    pthread_mutex_unlock(&philo->data->philo[temp].mutex_fork);
     return (NULL);
 }
 
@@ -198,40 +160,85 @@ int init(int argc, char **argv, t_data *data)
     if (!data->philo )
         return (0);
     i = 0;
+    pthread_mutex_init(&data->mutex_death, NULL);
     data->time  = time_in_ms(0, 0);
     printf("[%s] time : %ld\n",__FUNCTION__, data->time);
     while (i < data->nbr_of_philo)
     {
         // printf("[%s] Début while i : %d\n",__FUNCTION__, i);
         data->philo[i].time  = time_in_ms(0, 0);
+        data->philo[i].death_time  = 0;
         data->philo[i].id = i;
-        data->philo[i].last_time_eat = 0;
         data->philo[i].nbr_eat = 0;
         data->philo[i].data = data;
-        pthread_mutex_init(&data->philo[i].mutex, NULL);
-        pthread_mutex_lock(&data->philo[i].mutex);
+        data->philo[i].last_time_eat = time_in_ms(0, 0);
+        pthread_mutex_init(&data->philo[i].mutex_fork, NULL);
+        pthread_mutex_lock(&data->philo[i].mutex_fork);
         pthread_create(&data->philo[i].thread, NULL, ft_philo, &data->philo[i]);
-        pthread_mutex_unlock(&data->philo[i].mutex);
+        pthread_mutex_unlock(&data->philo[i].mutex_fork);
         // printf("[%s] Fin while i : %d\n",__FUNCTION__, i);
         i++;
     }
     return (1);
 }
 
-int check_death(t_data *data)
+// int check_death(t_data *data)
+// {
+//     int i;
+//     long tp_time;
+//     int temp_id;
+
+//     i = 0;
+//     while (i < data->nbr_of_philo)
+//     {
+//         if (data->philo[i % data->nbr_of_philo].state == e_died)
+//         {
+//             tp_time = time_in_ms(1, data->philo[i % data->nbr_of_philo].time);
+//             temp_id = data->philo[i % data->nbr_of_philo].id + 1;
+//             printf("%ld Philosopher %d died\n", tp_time, temp_id);
+//             return (1);
+//         }
+//         i++;
+//     }
+//     return (0);
+// }
+
+int is_dead(t_philo *philo)
+{
+    pthread_mutex_lock(&philo->data->mutex_death);
+    // printf("%ld Philosopher %d Am I dead ?\n", time_in_ms(1, philo->time), philo->id + 1);
+    if (philo->data->dead == 1)
+    {
+        // printf("%ld Philosopher %d Yes \n", time_in_ms(1, philo->time), philo->id + 1);
+        pthread_mutex_unlock(&philo->data->mutex_death);
+        return (1);
+    }
+    if (time_in_ms(0, 0) - philo->last_time_eat >= philo->data->t_to_die)
+    {
+        // printf("%ld Philosopher %d Yes \n", time_in_ms(1, philo->time), philo->id + 1);
+        philo->death_time = time_in_ms(1, philo->time);
+        philo->state = e_died;
+        philo->data->dead = 1;
+        pthread_mutex_unlock(&philo->data->mutex_death);
+        return (1);
+    }
+    pthread_mutex_unlock(&philo->data->mutex_death);
+    return (0);
+}
+
+void check_death(t_data *data)
 {
     int i;
+    int n;
 
+    n = data->nbr_of_philo;
     i = 0;
-    while (i < data->nbr_of_philo)
+    while (1)
     {
-        if (data->philo[i % data->nbr_of_philo].state == e_DIED)
-        {
-            return (1);
-        }
+        if (is_dead(&data->philo[i % n]))
+            return ;
         i++;
     }
-    return (0);
 }
 
 // Le temps le plus grand pour la boucle du time initial
@@ -240,37 +247,22 @@ int main(int argc, char **argv)
     t_data data;
     int i;
 
-    printf("[%s] START INIT\n",__FUNCTION__);
+    // printf("[%s] START INIT\n",__FUNCTION__);
     if (!init(argc, argv, &data))
         return (0);
-    printf("[%s] INIT DONE\n",__FUNCTION__);
+    // printf("[%s] INIT DONE\n",__FUNCTION__);
 
-    while (!check_death(&data))
-    {}
+    check_death(&data);
     i = 0;
     while (i < data.nbr_of_philo)
     {
-        pthread_detach(data.philo[i % data.nbr_of_philo].thread);
+        pthread_join(data.philo[i % data.nbr_of_philo].thread, NULL);
         i++;
     }
-    // while (1)
+    // while (i < data.nbr_of_philo)
     // {
-    //     pthread_join(data.philo[i % data.nbr_of_philo].thread, NULL);
+    //     pthread_detach(data.philo[i % data.nbr_of_philo].thread);
     //     i++;
     // }
-    // printf("[%s] MAIN DONE\n",__FUNCTION__);
-    // // if (!init(argc, argv, &data))
-    // //     return (0);
-    // pthread_mutex_init(&data.mutex, NULL);
-    // pthread_mutex_lock(&data.mutex);
-    // printf("[%s] START\n",__FUNCTION__);
-    
-    // pthread_create(&thread1, NULL, fct, &data);
-    // accurate_msleep(700);
-    // printf("[%s] Created\n",__FUNCTION__);
-    // pthread_mutex_unlock(&data.mutex);
-    // pthread_join(thread1, NULL);
-    // destroy(&data.mutex);
-    
     return (0);
 }
