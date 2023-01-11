@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/04 19:44:24 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/04 22:02:54 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/11 17:24:25 by atchougo         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	ft_atoi(const char *str)
 	result = 0;
 	sign = 1;
 	while (*str == '\t' || *str == '\n' || *str == '\v' || *str == '\f'
-			|| *str == '\r' || *str == ' ')
+		|| *str == '\r' || *str == ' ')
 		str++;
 	if (*str == '-' || *str == '+')
 	{
@@ -62,17 +62,17 @@ static int	is_a_number(int argc, char **argv)
 	return (1);
 }
 
-int is_parsing_ok(int argc, char **argv)
+int	is_parsing_ok(int argc, char **argv)
 {
 	if (argc < 5 || argc > 6 || !is_a_number(argc - 1, argv))
 	{
 		printf("Error\n");
 		return (0);
-	}    
+	}
 	return (1);
 }
 
-int parse_value(int argc, char **argv, t_data *data)
+int	parse_value(int argc, char **argv, t_data *data)
 {
 	if (!is_parsing_ok(argc, argv))
 		return (0);

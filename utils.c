@@ -6,13 +6,13 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:34 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 17:18:29 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/11 17:30:14 by atchougo         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-void accurate_msleep(unsigned long long msec)
+void	accurate_msleep(unsigned long long msec)
 {
 	long	actual_time;
 
@@ -23,19 +23,19 @@ void accurate_msleep(unsigned long long msec)
 	}
 }
 
-void to_print_death(t_philo *philo)
+void	to_print_death(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->mutex_death);
 	if (philo->state == e_died)
 		printf("\e[1;101m%ld Philosopher %d died\e[0m\n", \
-		philo->death_time, philo->id + 1);
+				philo->death_time, philo->id + 1);
 	pthread_mutex_unlock(&philo->data->mutex_death);
 }
 
-long time_in_ms(int value, long time)
+long	time_in_ms(int value, long time)
 {
 	struct timeval	tp;
-	long		ms;
+	long			ms;
 
 	gettimeofday(&tp, NULL);
 	if (value)
@@ -45,7 +45,7 @@ long time_in_ms(int value, long time)
 		return (ms - time);
 	}
 	else
-	{ 
+	{
 		ms = tp.tv_sec * 1000;
 		ms += tp.tv_usec / 1000;
 		return (ms);
