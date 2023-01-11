@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:38 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 17:51:17 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/11 18:43:52 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,19 +94,14 @@ void	*ft_philo(void *phil)
 
 	philo = (t_philo *)phil;
 	temp = (philo->id + 1) % philo->data->nbr_of_philo;
-	philo->last_time_eat = time_in_ms(0, 0);
 	while (1 && thinking(philo))
 	{
 		if ((philo->id + 1) % 2 == 0 && !sleeping(philo))
-		{
 			break ;
-		}
 		if (!eating(philo))
 			break ;
 		if ((philo->id + 1) % 2 != 0 && !sleeping(philo))
-		{
 			break ;
-		}
 	}
 	to_print_death(philo);
 	pthread_mutex_unlock(&philo->mutex_fork);

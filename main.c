@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 18:10:31 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 17:35:01 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/11 18:41:39 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,12 @@ int	init(int argc, char **argv, t_data *data)
 		data->philo[i].data = data;
 		data->philo[i].last_time_eat = time_in_ms(0, 0);
 		pthread_mutex_init(&data->philo[i].mutex_fork, NULL);
+        if (i == 0)
+		    pthread_mutex_lock(&data->philo[i].mutex_fork);
 		pthread_create(&data->philo[i].thread, NULL, \
 				ft_philo, &data->philo[i]);
+        if (i == 0)
+            pthread_mutex_unlock(&data->philo[i].mutex_fork);
 		i++;
 	}
 	return (1);
