@@ -6,11 +6,21 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:38 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 17:29:37 by atchougo         ###   ########lyon.fr   */
+/*   Updated: 2023/01/11 17:51:17 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
+
+static void	to_print(char *str, t_philo *philo)
+{
+	int	c;
+	int	temp;
+
+	temp = (philo->id + 1) % philo->data->nbr_of_philo;
+	c = (philo->id % 8) + 30;
+	printf(str, c, time_in_ms(1, philo->time), philo->id + 1);
+}
 
 int	thinking(t_philo *philo)
 {
@@ -26,7 +36,10 @@ int	thinking(t_philo *philo)
 		pthread_mutex_lock(&philo->data->mutex_death);
 		philo->state = e_died;
 		pthread_mutex_unlock(&philo->data->mutex_death);
+		if (!pthread_mutex_lock(&philo->mutex_fork))
+			to_print("\e[1;%dm%ld Philosopher %d has taken a fork\e[0m\n", philo);
 		accurate_msleep(philo->data->t_to_die + 2);
+		pthread_mutex_unlock(&philo->mutex_fork);
 		return (0);
 	}
 	return (1);
@@ -47,16 +60,6 @@ int	sleeping(t_philo *philo)
 	return (1);
 }
 
-void	to_print(char *str, t_philo *philo)
-{
-	int	c;
-	int	temp;
-
-	temp = (philo->id + 1) % philo->data->nbr_of_philo;
-	c = (philo->id % 8) + 30;
-	printf(str, c, time_in_ms(1, philo->time), philo->id + 1);
-}
-
 int	eating(t_philo *philo)
 {
 	int	temp;
@@ -64,13 +67,13 @@ int	eating(t_philo *philo)
 	temp = (philo->id + 1) % philo->data->nbr_of_philo;
 	if (is_dead(philo))
 		return (0);
-	if (!pthread_mutex_lock(&philo->mutex_fork) && \
-			!pthread_mutex_lock(&philo->data->philo[temp].mutex_fork))
+	if (!pthread_mutex_lock(&philo->mutex_fork))
 	{
+		to_print("\e[1;%dm%ld Philosopher %d has taken a fork\e[0m\n", philo);
+		if (!pthread_mutex_lock(&philo->data->philo[temp].mutex_fork))
+			to_print("\e[1;%dm%ld Philosopher %d has taken a fork\e[0m\n", philo);
 		if (is_dead(philo))
 			return (0);
-		to_print("\e[1;%dm%ld Philosopher %d has taken a fork\e[0m\n", philo);
-		to_print("\e[1;%dm%ld Philosopher %d has taken a fork\e[0m\n", philo);
 		philo->last_time_eat = time_in_ms(0, 0);
 		to_print("\e[1;%dm%ld Philosopher %d is eating\e[0m\n", philo);
 		accurate_msleep(philo->data->t_to_eat);
