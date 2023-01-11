@@ -59,5 +59,6 @@ int parse_value(int argc, char **argv, t_data *data);
 long time_in_ms(int value, long time);
 int is_dead(t_philo *philo);
 void destroy(t_data *data);
+void *ft_philo(void *phil);
 
 #endif
