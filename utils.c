@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:34 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 17:30:14 by atchougo         ###   ########lyon.fr   */
+/*   Updated: 2023/01/11 19:00:56 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,22 @@ long	time_in_ms(int value, long time)
 		ms += tp.tv_usec / 1000;
 		return (ms);
 	}
+}
+
+void	destroy(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->nbr_of_philo)
+	{
+		pthread_mutex_destroy(&data->philo[i].mutex_fork);
+		i++;
+	}
+	if (data->philo)
+	{
+		free(data->philo);
+		data->philo = NULL;
+	}
+	pthread_mutex_destroy(&data->mutex_death);
 }
