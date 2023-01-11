@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 18:08:01 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/05 19:01:06 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/11 17:16:00 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,7 @@ long time_in_ms(int value, long time);
 int is_dead(t_philo *philo);
 void destroy(t_data *data);
 void *ft_philo(void *phil);
+void accurate_msleep(unsigned long long msec);
+void to_print_death(t_philo *philo);
 
 #endif
