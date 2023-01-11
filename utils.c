@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:34 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 19:00:56 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/11 19:09:51 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,16 @@ void	accurate_msleep(unsigned long long msec)
 	{
 		usleep(500);
 	}
+}
+
+void	to_print(char *str, t_philo *philo)
+{
+	int	c;
+	int	temp;
+
+	temp = (philo->id + 1) % philo->data->nbr_of_philo;
+	c = (philo->id % 8) + 30;
+	printf(str, c, time_in_ms(1, philo->time), philo->id + 1);
 }
 
 void	to_print_death(t_philo *philo)
