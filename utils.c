@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:34 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 19:09:51 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/12 19:14:59 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void	accurate_msleep(unsigned long long msec)
 	long	actual_time;
 
 	actual_time = time_in_ms(0, 0);
+	usleep(msec * 0.9);
 	while (time_in_ms(0, 0) - actual_time < (long int)(msec))
 	{
 		usleep(500);

@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:38 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/12 18:53:10 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/12 19:16:05 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ void	*ft_philo(void *phil)
 
 	philo = (t_philo *)phil;
 	temp = (philo->id + 1) % philo->data->nbr_of_philo;
-	// ajouter une fonction pour mettre un delai si c'est impair
 	if ((philo->id + 1) % 2 == 0)
 		usleep(1500);
 	while (1 && thinking(philo))
