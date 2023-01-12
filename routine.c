@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:38 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/12 19:34:48 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/12 20:05:24 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,11 +100,11 @@ void	*ft_philo(void *phil)
 		if (!sleeping(philo))
 			break ;
 	}
-	to_print_death(philo);
-	pthread_mutex_unlock(&philo->mutex_fork);
-	pthread_mutex_unlock(&philo->data->philo[temp].mutex_fork);
 	pthread_mutex_unlock(&philo->data->mutex_stop);
 	philo->data->stop = 1;
 	pthread_mutex_unlock(&philo->data->mutex_stop);
+	to_print_death(philo);
+	pthread_mutex_unlock(&philo->mutex_fork);
+	pthread_mutex_unlock(&philo->data->philo[temp].mutex_fork);
 	return (NULL);
 }

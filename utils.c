@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:34 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/12 19:14:59 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/12 20:10:38 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	to_print(char *str, t_philo *philo)
 
 void	to_print_death(t_philo *philo)
 {
+	is_dead(philo);
 	pthread_mutex_lock(&philo->data->mutex_death);
 	if (philo->state == e_died)
 		printf("\e[1;101m%ld Philosopher %d died\e[0m\n", \
