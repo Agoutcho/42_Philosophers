@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 18:08:01 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/12 19:08:56 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/12 19:29:30 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,9 @@ typedef struct s_data {
 	int				nbr_must_eat;
 	long			time;
 	int				dead;
+	int				stop;
 	pthread_mutex_t	mutex_death;
+	pthread_mutex_t	mutex_stop;
 	t_philo			*philo;
 }				t_data;
 

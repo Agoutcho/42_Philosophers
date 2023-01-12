@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/04 19:44:24 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/12 19:08:27 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/12 19:31:53 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@ int	parse_value(int argc, char **argv, t_data *data)
 	data->t_to_die = ft_atoi(argv[2]);
 	data->t_to_eat = ft_atoi(argv[3]);
 	data->t_to_sleep = ft_atoi(argv[4]);
+	data->dead = 0;
+	data->stop = 0;
 	if (data->nbr_of_philo < 1 || data->nbr_of_philo > 200 \
 			|| data->t_to_die < 60 || data->t_to_eat < 60 \
 			|| data->t_to_sleep < 60 || data->nbr_must_eat == 0)

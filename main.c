@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 18:10:31 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 19:00:53 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/12 19:33:45 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,13 @@ void	check_death(t_data *data)
 	{
 		if (is_dead(&data->philo[i % n]))
 			return ;
+		pthread_mutex_lock(&data->mutex_stop);
+		if (data->stop)
+		{
+			pthread_mutex_unlock(&data->mutex_stop);
+			return ;
+		}
+		pthread_mutex_unlock(&data->mutex_stop);
 		i++;
 	}
 }
