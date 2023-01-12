@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:38 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 19:20:23 by atchougo         ###   ########lyon.fr   */
+/*   Updated: 2023/01/12 18:53:10 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,9 @@ int	eating(t_philo *philo)
 	if (!pthread_mutex_lock(&philo->data->philo[temp].mutex_fork) \
 		&& !take_fork(philo))
 		return (0);
+	pthread_mutex_lock(&philo->data->mutex_death);
 	philo->last_time_eat = time_in_ms(0, 0);
+	pthread_mutex_unlock(&philo->data->mutex_death);
 	to_print("\e[1;%dm%ld Philosopher %d is eating\e[0m\n", philo);
 	accurate_msleep(philo->data->t_to_eat);
 	pthread_mutex_unlock(&philo->mutex_fork);
@@ -89,13 +91,14 @@ void	*ft_philo(void *phil)
 
 	philo = (t_philo *)phil;
 	temp = (philo->id + 1) % philo->data->nbr_of_philo;
+	// ajouter une fonction pour mettre un delai si c'est impair
+	if ((philo->id + 1) % 2 == 0)
+		usleep(1500);
 	while (1 && thinking(philo))
 	{
-		if ((philo->id + 1) % 2 == 0 && !sleeping(philo))
-			break ;
 		if (!eating(philo))
 			break ;
-		if ((philo->id + 1) % 2 != 0 && !sleeping(philo))
+		if (!sleeping(philo))
 			break ;
 	}
 	to_print_death(philo);

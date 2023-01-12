@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/04 19:44:24 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 17:24:25 by atchougo         ###   ########lyon.fr   */
+/*   Updated: 2023/01/12 19:08:27 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static int	is_a_number(int argc, char **argv)
 	return (1);
 }
 
-int	is_parsing_ok(int argc, char **argv)
+static int	is_parsing_ok(int argc, char **argv)
 {
 	if (argc < 5 || argc > 6 || !is_a_number(argc - 1, argv))
 	{
@@ -87,6 +87,10 @@ int	parse_value(int argc, char **argv, t_data *data)
 	if (data->nbr_of_philo < 1 || data->nbr_of_philo > 200 \
 			|| data->t_to_die < 60 || data->t_to_eat < 60 \
 			|| data->t_to_sleep < 60 || data->nbr_must_eat == 0)
+	{
+		printf("Error\n");
 		return (0);
+	}
+	repare_value(data);
 	return (1);
 }

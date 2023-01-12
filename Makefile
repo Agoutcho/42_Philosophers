@@ -2,11 +2,13 @@ NAME = philo
 
 SRCS =			main.c \
 				parsing.c \
+				post_parse.c \
 				routine.c \
 				utils.c \
 
 BONUS = 		main.c \
 				parsing.c \
+				post_parse.c \
 				routine.c \
 				utils.c \
 

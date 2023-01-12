@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 18:08:01 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/11 19:09:59 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/12 19:08:56 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ typedef struct s_data {
 	t_philo			*philo;
 }				t_data;
 
-int		is_parsing_ok(int argc, char **argv);
 int		parse_value(int argc, char **argv, t_data *data);
 long	time_in_ms(int value, long time);
 int		is_dead(t_philo *philo);
@@ -63,5 +62,6 @@ void	*ft_philo(void *phil);
 void	accurate_msleep(unsigned long long msec);
 void	to_print(char *str, t_philo *philo);
 void	to_print_death(t_philo *philo);
+void	repare_value(t_data *data);
 
 #endif
