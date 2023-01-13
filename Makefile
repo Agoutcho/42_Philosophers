@@ -31,7 +31,6 @@ LEAKS_FLAGS = -fsanitize=address -O1 -fno-omit-frame-pointer -fsanitize=undefine
 all: $(NAME)
 
 $(NAME): $(OBJS) $(HEADER_FILES)
-	@$(CC) $(C_FLAGS) -c $(SRCS)
 	@$(CC) $(C_FLAGS) -o $(NAME) $(OBJS)
 	@printf "✅ \033[0;32mCompilation done \033[0m\n"
 
