@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/04 19:44:24 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/13 16:19:54 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/13 16:22:47 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ int	parse_value(int argc, char **argv, t_data *data)
 		printf("Error\n");
 		return (0);
 	}
-	if (data->nbr_must_eat == -1)
+	if (argc == 6 && ft_atoi(argv[5]) == 0)
 		return (0);
 	repare_value(data);
 	return (1);
