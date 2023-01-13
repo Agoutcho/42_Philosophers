@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:34 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/13 15:07:07 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/13 17:12:53 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,10 @@ void	to_print(char *str, t_philo *philo)
 
 	temp = (philo->id + 1) % philo->data->nbr_of_philo;
 	c = (philo->id % 8) + 30;
-	printf(str, c, time_in_ms(1, philo->time), philo->id + 1);
+	pthread_mutex_lock(&philo->data->mutex_death);
+	if (philo->data->dead != 1)
+		printf(str, c, time_in_ms(1, philo->time), philo->id + 1);
+	pthread_mutex_unlock(&philo->data->mutex_death);
 }
 
 void	to_print_death(t_philo *philo)
@@ -39,8 +42,10 @@ void	to_print_death(t_philo *philo)
 	is_dead(philo);
 	pthread_mutex_lock(&philo->data->mutex_death);
 	if (philo->state == e_died)
+	{
 		printf("\e[1;101m%ld Philosopher %d died\e[0m\n", \
 				philo->death_time, philo->id + 1);
+	}
 	pthread_mutex_unlock(&philo->data->mutex_death);
 }
 

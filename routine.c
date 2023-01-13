@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:38 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/13 14:51:39 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/13 17:12:20 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,11 @@ int	thinking(t_philo *philo)
 	c = (philo->id % 8) + 30;
 	if (is_dead(philo))
 		return (0);
-	printf("\e[1;%dm%ld Philosopher %d is thinking\e[0m\n", \
-			c, time_in_ms(1, philo->time), philo->id + 1);
+	pthread_mutex_lock(&philo->data->mutex_death);
+	if (philo->data->dead != 1)
+		printf("\e[1;%dm%ld Philosopher %d is thinking\e[0m\n", \
+				c, time_in_ms(1, philo->time), philo->id + 1);
+	pthread_mutex_unlock(&philo->data->mutex_death);
 	if (philo->data->nbr_of_philo == 1)
 	{
 		pthread_mutex_lock(&philo->data->mutex_death);
@@ -44,8 +47,11 @@ int	sleeping(t_philo *philo)
 	c = (philo->id % 8) + 30;
 	if (is_dead(philo))
 		return (0);
-	printf("\e[1;%dm%ld Philosopher %d is sleeping\e[0m\n", \
-			c, time_in_ms(1, philo->time), philo->id + 1);
+	pthread_mutex_lock(&philo->data->mutex_death);
+	if (philo->data->dead != 1)
+		printf("\e[1;%dm%ld Philosopher %d is sleeping\e[0m\n", \
+				c, time_in_ms(1, philo->time), philo->id + 1);
+	pthread_mutex_unlock(&philo->data->mutex_death);
 	accurate_msleep(sleep);
 	return (1);
 }
