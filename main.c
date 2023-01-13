@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 18:10:31 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/12 19:33:45 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/13 14:53:16 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ int	init(int argc, char **argv, t_data *data)
 		return (0);
 	i = 0;
 	pthread_mutex_init(&data->mutex_death, NULL);
+	pthread_mutex_init(&data->mutex_stop, NULL);
 	data->time = time_in_ms(0, 0);
 	while (i < data->nbr_of_philo)
 	{
