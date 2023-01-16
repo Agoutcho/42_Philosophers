@@ -6,7 +6,7 @@
 /*   By: atchougo <atchougo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 16:37:34 by atchougo          #+#    #+#             */
-/*   Updated: 2023/01/13 17:12:53 by atchougo         ###   ########.fr       */
+/*   Updated: 2023/01/16 14:54:45 by atchougo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,5 @@ void	destroy(t_data *data)
 		data->philo = NULL;
 	}
 	pthread_mutex_destroy(&data->mutex_death);
+	pthread_mutex_destroy(&data->mutex_stop);
 }
