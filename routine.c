@@ -67,22 +67,51 @@ int	take_fork(t_philo *philo)
 int	eating(t_philo *philo)
 {
 	int	temp;
+	int temp_fork1;
+	int temp_fork2;
 
 	temp = (philo->id + 1) % philo->data->nbr_of_philo;
-	if (is_dead(philo))
-		return (0);
-	if (!pthread_mutex_lock(&philo->mutex_fork) && !take_fork(philo))
-		return (0);
-	if (!pthread_mutex_lock(&philo->data->philo[temp].mutex_fork) \
-		&& !take_fork(philo))
-		return (0);
+	while(1)
+	{
+		if (is_dead(philo))
+			return (0);
+		pthread_mutex_lock(&philo->mutex_fork);
+		if (philo->fork == 1)
+		{
+			temp_fork1 = philo->fork;
+			philo->fork = 0;
+		}
+		pthread_mutex_unlock(&philo->mutex_fork);
+		if (temp_fork1 && take_fork(philo))
+			break;
+	}
+	while(1)
+	{
+		if (is_dead(philo))
+			return (0);
+		pthread_mutex_lock(&philo->data->philo[temp].mutex_fork);
+		if (philo->data->philo[temp].fork == 1)
+		{
+			temp_fork2 = philo->data->philo[temp].fork;
+			philo->data->philo[temp].fork = 0;
+		}
+		pthread_mutex_unlock(&philo->data->philo[temp].mutex_fork);
+		if (temp_fork2 && take_fork(philo))
+			break;
+	}
 	pthread_mutex_lock(&philo->data->mutex_death);
 	philo->last_time_eat = time_in_ms(0, 0);
 	pthread_mutex_unlock(&philo->data->mutex_death);
 	to_print("\e[1;%dm%ld Philosopher %d is eating\e[0m\n", philo);
 	accurate_msleep(philo->data->t_to_eat);
+	pthread_mutex_lock(&philo->mutex_fork);
+		if (philo->fork == 0)
+			philo->fork = 1;
 	pthread_mutex_unlock(&philo->mutex_fork);
-	pthread_mutex_unlock(&philo->data->philo[temp].mutex_fork);
+	pthread_mutex_lock(&philo->mutex_fork);
+		if (philo->data->philo[temp].fork == 0)
+			philo->data->philo[temp].fork = 1;
+	pthread_mutex_unlock(&philo->mutex_fork);
 	philo->nbr_eat++;
 	if (philo->data->nbr_must_eat != -1 \
 			&& philo->nbr_eat >= philo->data->nbr_must_eat)

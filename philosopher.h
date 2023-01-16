@@ -36,6 +36,7 @@ typedef struct s_philo {
 	int				nbr_eat;
 	long			time;
 	long			death_time;
+    int fork;
 	t_state			state;
 	pthread_mutex_t	mutex_fork;
 	pthread_t		thread;

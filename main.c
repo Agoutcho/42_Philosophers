@@ -62,6 +62,7 @@ void	init_philo(t_data *data, int i)
 	data->philo[i].nbr_eat = 0;
 	data->philo[i].data = data;
 	data->philo[i].last_time_eat = time_in_ms(0, 0);
+	data->philo[i].fork = 1;
 }
 
 int	init(int argc, char **argv, t_data *data)

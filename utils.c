@@ -27,9 +27,9 @@ void	accurate_msleep(unsigned long long msec)
 void	to_print(char *str, t_philo *philo)
 {
 	int	c;
-	int	temp;
+	// int	temp;
 
-	temp = (philo->id + 1) % philo->data->nbr_of_philo;
+	// temp = (philo->id + 1) % philo->data->nbr_of_philo;
 	c = (philo->id % 8) + 30;
 	pthread_mutex_lock(&philo->data->mutex_death);
 	if (philo->data->dead != 1)
